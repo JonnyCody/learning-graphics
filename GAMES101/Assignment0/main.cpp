@@ -44,5 +44,23 @@ int main(){
     // matrix multiply i * j
     // matrix multiply vector i * v
 
+
+    Eigen::Vector3f position(2.0, 1.0, 1.0);
+    Eigen::Matrix3f rotation, translation;
+    /*position << 2.0, 1.0, 0.0;*/
+    rotation << std::cos(90.0/180.0*acos(-1)), -std::sin(90.0/180.0 * std::acos(-1)), 0,
+            std::sin(90.0/180.0 * std::acos(-1)), std::cos(90.0/180.0*acos(-1)), 0,
+                0, 0, 1;
+    translation << 1, 0, 1,
+                    0, 1, 2,
+                    0, 0, 1;
+
+    std::cout << "the answer of assignment 0" << std::endl;
+    /*std::cout << position <<std::endl;
+    std::cout << position.transpose() << std::endl;
+    std::cout << rotation << std::endl;
+    std::cout << translation << std::endl;*/
+    std::cout << translation * rotation *  position << std::endl;
     return 0;
 }
+
