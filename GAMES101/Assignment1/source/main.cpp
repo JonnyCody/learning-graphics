@@ -62,6 +62,27 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     return projection;
 }
 
+Eigen::Matrix4f get_rotation(Vector3f axis, float angle)
+{
+    if(axis.x()==0&&axis.y()==0&&axis.z()==0)
+    {
+        throw std::runtime_error("axis is not origin point!");
+    }
+    Eigen::Matrix4f rotation = Eigen::Matrix4f::Identity();
+    Eigen::Matrix3f N_matrix;
+    N_matrix << 0, -axis.z(), axis.y(),
+                axis.z(), 0, -axis.x(),
+                -axis.y(), axis.x(), 0;
+    Eigen::Matrix3f R_axis_angle;
+    R_axis_angle = std::cos(angle/180.0 * MY_PI)*Eigen::Matrix3f::Identity() +
+            ( 1 - std::cos(angle/180*MY_PI))*axis*axis.transpose() + std::sin(angle/180.0*MY_PI)*N_matrix;
+    rotation << R_axis_angle(0,0),  R_axis_angle(0,1), R_axis_angle(0,2), 0,
+                R_axis_angle(1,0),  R_axis_angle(1,1), R_axis_angle(1,2), 0,
+                R_axis_angle(2,0),  R_axis_angle(2,1), R_axis_angle(2,2), 0,
+                0, 0, 0, 1;
+    return rotation;
+}
+
 int main(int argc, const char** argv)
 {
     float angle = 0;
@@ -111,8 +132,13 @@ int main(int argc, const char** argv)
     while (key != 27) {
         r.clear(rst::Buffers::Color | rst::Buffers::Depth);
 
-        r.set_model(get_model_matrix(angle));
+        //r.set_model(get_model_matrix(angle));
+
+        //  rotation according to any axis
+        r.set_model(get_rotation(Vector3f(0,0,1),angle));
+
         r.set_view(get_view_matrix(eye_pos));
+
         r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
 
         r.draw(pos_id, ind_id, rst::Primitive::Triangle);
