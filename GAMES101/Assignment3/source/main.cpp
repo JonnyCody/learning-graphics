@@ -50,7 +50,23 @@ Eigen::Matrix4f get_model_matrix(float angle)
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
 {
     // TODO: Use the same projection matrix from the previous assignments
+    Eigen::Matrix4f projection;
+    Eigen::Matrix4f M_persp2ortho, M_viewprot;
+    M_persp2ortho << zNear, 0, 0, 0,
+            0, zNear, 0, 0,
+            0, 0, zNear + zFar, -zNear * zFar,
+            0, 0, 1, 0;
+    float t, r;
 
+    t = std::abs(zNear) * std::tan(eye_fov/2/180*MY_PI);//height
+    r = t * aspect_ratio; //width
+    M_viewprot << 1.0/r, 0, 0, 0,
+            0, 1.0/t, 0, 0,
+            0, 0, -1, 0,
+            0, 0, 0, 1;
+    projection = M_persp2ortho * M_viewprot * projection;
+
+    return projection;
 }
 
 Eigen::Vector3f vertex_shader(const vertex_shader_payload& payload)
