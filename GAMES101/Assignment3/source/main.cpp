@@ -100,7 +100,7 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
     if (payload.texture)
     {
         // TODO: Get the texture value at the texture coordinates of the current fragment
-
+        return_color = payload.texture->getColor(payload.tex_coords.x(),payload.tex_coords.y());
     }
     Eigen::Vector3f texture_color;
     texture_color << return_color.x(), return_color.y(), return_color.z();
@@ -128,7 +128,24 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
     {
         // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
         // components are. Then, accumulate that result on the *result_color* object.
+        Eigen::Vector3f v=(eye_pos-point).normalized();
+        Eigen::Vector3f n=normal.normalized();
+        Eigen::Vector3f l=(light.position-point).normalized();
 
+        Eigen::Vector3f ambient(ka.x()*amb_light_intensity.x(), ka.y()*amb_light_intensity.y(),ka.z()*amb_light_intensity.z());
+
+        float r_square = (eye_pos-point).squaredNorm();
+        float max_n_l= std::max(0.0f, n.dot(l));
+        Eigen::Vector3f diffuse = {kd.x()*(light.intensity.x()/r_square), kd.y()*(light.intensity.y()/r_square),kd.z()*(light.intensity.z()/r_square)};
+        diffuse*=max_n_l;
+
+        Eigen::Vector3f h=(v+l).normalized();
+        float max_n_h = std::max(0.0f,n.dot(h));
+        max_n_h = std::pow(max_n_h,p);
+        Eigen::Vector3f specular = {ks.x()*(light.intensity.x()/r_square),ks.y()*(light.intensity.y()/r_square),ks.z()*(light.intensity.z()/r_square)};
+        specular*=max_n_h;
+
+        result_color+=(ambient + diffuse + specular);
     }
 
     return result_color * 255.f;
@@ -158,13 +175,28 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
     {
         // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
         // components are. Then, accumulate that result on the *result_color* object.
-        
+        Eigen::Vector3f v=(eye_pos-point).normalized();
+        Eigen::Vector3f n=normal.normalized();
+        Eigen::Vector3f l=(light.position-point).normalized();
+
+        Eigen::Vector3f ambient(ka.x()*amb_light_intensity.x(), ka.y()*amb_light_intensity.y(),ka.z()*amb_light_intensity.z());
+
+        float r_square = (eye_pos-point).squaredNorm();
+        float max_n_l= std::max(0.0f, n.dot(l));
+        Eigen::Vector3f diffuse = {kd.x()*(light.intensity.x()/r_square), kd.y()*(light.intensity.y()/r_square),kd.z()*(light.intensity.z()/r_square)};
+        diffuse*=max_n_l;
+
+        Eigen::Vector3f h=(v+l).normalized();
+        float max_n_h = std::max(0.0f,n.dot(h));
+        max_n_h = std::pow(max_n_h,p);
+        Eigen::Vector3f specular = {ks.x()*(light.intensity.x()/r_square),ks.y()*(light.intensity.y()/r_square),ks.z()*(light.intensity.z()/r_square)};
+        specular*=max_n_h;
+
+        result_color+=(ambient + diffuse + specular);
     }
 
     return result_color * 255.f;
 }
-
-
 
 Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payload)
 {
