@@ -61,4 +61,23 @@ bool Scene::trace(
 Vector3f Scene::castRay(const Ray &ray, int depth) const
 {
     // TO DO Implement Path Tracing Algorithm here
+    if(depth > this->maxDepth)
+    {
+        return Vector3f(0.0,0.0,0.0);
+    }
+    Intersection intersection = this->intersect(ray);
+    Material *m = intersection.m;
+    Object *hitObject = intersection.obj;
+    Vector3f hitColor = this->backgroundColor;
+    Vector2f uv;
+    uint32_t index = 0;
+    if(intersection.happened)
+    {
+        Vector3f hitPoint = intersection.coords;
+        Vector3f N = intersection.normal;
+        switch (m->getType())
+        {
+
+        }
+    }
 }
