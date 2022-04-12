@@ -262,21 +262,21 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
     // TODO: From your HW3, get the triangle rasterization code.
     auto v = t.toVector4();
 
-    float x_min = std::min(v.at(0).x(), std::min(v.at(1).x(),v.at(2).x()));
-    float y_min = std::min(v.at(0).y(), std::min(v.at(1).y(),v.at(2).y()));
-    float x_max = std::max(v.at(0).x(), std::max(v.at(1).x(),v.at(2).x()));
-    float y_max = std::max(v.at(0).y(), std::max(v.at(1).y(),v.at(2).y()));
+    float min_x = std::min(v.at(0).x(), std::min(v.at(1).x(),v.at(2).x()));
+    float min_y = std::min(v.at(0).y(), std::min(v.at(1).y(),v.at(2).y()));
+    float max_x = std::max(v.at(0).x(), std::max(v.at(1).x(),v.at(2).x()));
+    float max_y = std::max(v.at(0).y(), std::max(v.at(1).y(),v.at(2).y()));
 
-    x_min = static_cast<int>(std::floor(x_min));
-    y_min = static_cast<int>(std::floor(y_min));
-    x_max = static_cast<int>(std::ceil(x_max));
-    y_max = static_cast<int>(std::ceil(y_max));
+    int x_min = static_cast<int>(std::floor(min_x));
+    int y_min = static_cast<int>(std::floor(min_y));
+    int x_max = static_cast<int>(std::ceil(max_x));
+    int y_max = static_cast<int>(std::ceil(max_y));
 
     for(auto i = x_min; i <= x_max; i++)
     {
         for(auto j = y_min; j<=y_max;j++)
         {
-            int x = static_cast<int>(i), y = static_cast<int>(j);
+            int x = i, y = j;
             if(insideTriangle((float )x+0.5,(float)y+0.5,t.v))
             {
                 // TODO: Inside your rasterization loop:
@@ -287,7 +287,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
                 // float Z = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
                 // float zp = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                 // zp *= Z;
-                auto[alpha, beta, gamma] = computeBarycentric2D(x, y, t.v);
+                auto[alpha, beta, gamma] = computeBarycentric2D(x+0.5, y+0.5, t.v);
                 float Z = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
                 float zp = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
                 zp *= Z;
@@ -312,7 +312,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
 
                     fragment_shader_payload payload( interpolated_color, interpolated_normal.normalized(), interpolated_texcoords, texture ? &*texture : nullptr);
                     payload.view_pos = interpolated_shadingcoords;
-                    auto pixel_color = this->fragment_shader(payload);
+                    auto pixel_color = fragment_shader(payload);
                     Vector2i position(x,y);
                     set_pixel(position, pixel_color);
                 }
