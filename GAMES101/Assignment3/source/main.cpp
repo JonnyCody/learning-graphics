@@ -231,7 +231,14 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payl
     // Position p = p + kn * n * h(u,v)
     // Normal n = normalize(TBN * ln)
 
-
+    Eigen::Vector3f n=normal;
+    Eigen::Vector3f t = {(n.x()*n.y())/std::sqrt(n.x()*n.x()+n.z()*n.z()),std::sqrt(n.x()*n.x()+n.z()*n.z()),
+                         n.z()*n.y()/std::sqrt(n.x()*n.x()+n.z()*n.z())};
+    Eigen::Vector3f b = n.cross(t);
+    Eigen::Matrix3f TBN;
+    TBN << t.x(),b.x(),n.x(),
+            t.y(),b.y(),n.y(),
+            t.z(),b.z(),n.z();
     Eigen::Vector3f result_color = {0, 0, 0};
 
     for (auto& light : lights)
