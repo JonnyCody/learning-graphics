@@ -7,5 +7,5 @@ set(CMAKE_CXX_STANDARD 17)
 
 #include_directories(/usr/local/include)
 
-add_executable(Ray main.cpp)
+add_executable(Ray main.cpp hittable.h sphere.h)
 #target_link_libraries(Rasterizer)
