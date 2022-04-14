@@ -1,10 +1,8 @@
-//
-// Created by jonny on 2022/4/12.
-//
+#ifndef COLOR_H
+#define COLOR_H
 
-#ifndef CHAPTER3_COLOR_H
-#define CHAPTER3_COLOR_H
 #include "vec3.h"
+
 #include <iostream>
 
 void write_color(std::ostream &out, color pixel_color) {
@@ -14,4 +12,4 @@ void write_color(std::ostream &out, color pixel_color) {
         << static_cast<int>(255.999 * pixel_color.z()) << '\n';
 }
 
-#endif //CHAPTER3_COLOR_H
+#endif
