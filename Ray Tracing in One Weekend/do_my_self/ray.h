@@ -11,19 +11,19 @@ class ray
 {
 public:
     ray(){}
-    ray(const point3& origin, const vec3 direction):org(origin),dir(direction){}
+    ray(const point3& org, const vec3 dir):origin(org),direction(dir){}
 
-    point3 origin(){return org;}
-    vec3 direction(){return dir;}
+    point3 get_origin(){return origin;}
+    vec3 get_direction(){return direction;}
 
     point3 at(double t)
     {
-        return org + t*dir;
+        return origin+ t*direction;
     }
 
 private:
-    point3 org;
-    vec3 dir;
+    point3 origin;
+    vec3 direction;
 };
 
 
