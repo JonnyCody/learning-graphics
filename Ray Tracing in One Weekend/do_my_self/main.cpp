@@ -6,6 +6,7 @@
 #include "ray.h"
 #include "color.h"
 #include "hittable.h"
+#include "hittable_list.h"
 #include "sphere.h"
 
 double hit_sphere(const point3& center, double radius, const ray& r)
@@ -48,6 +49,17 @@ color ray_color(const ray& r) {
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 
+color ray_color(const ray& r, hittable_list& world, hit_record& rec) {
+
+    if (world.hit(r, 0, infinity, rec))
+    {
+        return 0.5 * (rec.normal + color(1,1,1));
+    }
+    vec3 unit_direction = unit_vector(r.get_direction());
+    auto t= 0.5*(unit_direction.y() + 1.0);
+    return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
+}
+
 int main()
 {
     // Image
@@ -60,8 +72,9 @@ int main()
 
     //objects
     hit_record rec;
-    point3 cen(0, 0, -1);
-    sphere sphere1(cen, 0.5);
+    hittable_list world;
+    world.add(std::make_shared<sphere>(vec3(0, 0, -1), 0.5));
+    world.add(std::make_shared<sphere>(vec3(0, -100.5, -1), 100));
 
 
     // Render
@@ -74,7 +87,7 @@ int main()
             double u = double(i)/image_width;
             double v = double(j)/image_height;
             ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical());
-            color pixel_color = ray_color(r, sphere1, rec);
+            color pixel_color = ray_color(r, world, rec);
             write_color(std::cout, pixel_color);
         }
     }
