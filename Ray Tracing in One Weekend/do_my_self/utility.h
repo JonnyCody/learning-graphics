@@ -42,4 +42,30 @@ inline double random_number(double min, double max)
     return min + (max - min) * random_number();
 }
 
+vec3 random_vec3()
+{
+    return vec3(random_number(), random_number(), random_number());
+}
+
+point3 random_in_unit_sphere()
+{
+    while(true)
+    {
+        auto p = random_vec3();
+        if(p.length_square() >= 1)
+            continue;
+        return p;
+    }
+}
+
+point3 random_in_hemisphere(const vec3& normal)
+{
+    auto in_unit_sphere = random_in_unit_sphere();
+    if(dot(in_unit_sphere, normal)>0)
+    {
+        return in_unit_sphere;
+    }
+    return -in_unit_sphere;
+}
+
 #endif //RAYTRACING_UTILITY_H

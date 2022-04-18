@@ -49,11 +49,16 @@ color ray_color(const ray& r) {
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 
-color ray_color(const ray& r, hittable_list& world, hit_record& rec) {
-
+color ray_color(const ray& r, hittable_list& world, hit_record& rec, int depth)
+{
+    if(depth <= 0)
+    {
+        return color(0, 0, 0);
+    }
     if (world.hit(r, 0, infinity, rec))
     {
-        return 0.5 * (rec.normal + color(1,1,1));
+        auto target = rec.position + random_in_hemisphere(rec.normal);
+        return 0.5 * ray_color(ray(rec.position, target - rec.position), world, rec, depth-1);
     }
     vec3 unit_direction = unit_vector(r.get_direction());
     auto t= 0.5*(unit_direction.y() + 1.0);
@@ -67,6 +72,7 @@ int main()
     const int image_width = 800;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 20;
+    const int max_depth = 20;
 
     // Camera
     camera cam;
@@ -91,7 +97,7 @@ int main()
                 double u = double(i + random_number())/image_width;
                 double v = double(j + random_number())/image_height;
                 ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical());
-                pixel_color += ray_color(r, world, rec);
+                pixel_color += ray_color(r, world, rec, max_depth);
             }
             write_color(std::cout, pixel_color, samples_per_pixel);
         }
