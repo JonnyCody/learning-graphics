@@ -13,10 +13,10 @@ public:
     ray(){}
     ray(const point3& org, const vec3 dir):origin(org),direction(dir){}
 
-    point3 get_origin(){return origin;}
-    vec3 get_direction(){return direction;}
+    point3 get_origin() const {return origin;}
+    vec3 get_direction() const {return direction;}
 
-    point3 at(double t)
+    point3 at(double t) const
     {
         return origin+ t*direction;
     }

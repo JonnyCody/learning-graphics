@@ -74,14 +74,14 @@ public:
         return *this*=1.0/t;
     }
 
-    double length_squre()
+    double length_square()
     {
         return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
     }
 
     double length()
     {
-        return std::sqrt(length_squre());
+        return std::sqrt(length_square());
     }
 
 private:
@@ -93,7 +93,7 @@ inline std::ostream& operator<<(std::ostream& out, const vec3& v)
     return out << v.x() << ' ' << v.y() << ' ' << v.z();
 }
 
-inline double dot(vec3& u, vec3& v)
+inline double dot(vec3 u, vec3 v)
 {
     return u.x()*v.x() + u.y()*v.y() + u.z()*v.z();
 }
@@ -125,9 +125,9 @@ inline vec3 operator*(double t, const vec3& v)
     return vec3(t*v.x(),t*v.y(),t*v.z());
 }
 
-inline vec3 operator/(vec3& v, double t)
+inline vec3 operator/(vec3 v, double t)
 {
-    return vec3(v.x()/t, v.y()/t, v.z()/t);
+    return (1/t) * v;
 }
 
 inline vec3 unit_vector(vec3 v)
