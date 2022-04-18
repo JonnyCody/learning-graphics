@@ -66,6 +66,7 @@ int main()
     double aspect_ratio = 16.0/9.0;
     const int image_width = 800;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
+    const int samples_per_pixel = 20;
 
     // Camera
     camera cam;
@@ -81,14 +82,19 @@ int main()
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
     for(int j = image_height-1;j>=0;--j)
     {
-        std::cerr << "\rScanlines remaining: " << j << ' ' << std::flush;
+        std::cerr << "\rScan lines remaining: " << j << ' ' << std::flush;
         for(int i = 0; i < image_width; ++i)
         {
-            double u = double(i)/image_width;
-            double v = double(j)/image_height;
-            ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical());
-            color pixel_color = ray_color(r, world, rec);
-            write_color(std::cout, pixel_color);
+            color pixel_color(0, 0, 0);
+            for(int s = 0;s<samples_per_pixel;++s)
+            {
+                double u = double(i + random_number())/image_width;
+                double v = double(j + random_number())/image_height;
+                ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical());
+                pixel_color += ray_color(r, world, rec);
+            }
+            write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
+    std::cerr << "\nDone.\n";
 }

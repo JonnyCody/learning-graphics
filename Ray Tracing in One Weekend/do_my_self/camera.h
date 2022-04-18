@@ -16,12 +16,10 @@ public:
     camera()
     {
         origin = point3(0, 0, -1);
-        vfov = 120;
         double aspect_ratio = 16.0/9.0;
-        double h = tan(degree_to_radian(vfov)/2);
         double viewport_height = 2.0;
         double viewport_width = viewport_height*aspect_ratio;
-        double focal_length = viewport_height / h;
+        double focal_length = 1.0;
         origin = point3(0, 0, 0);
         vertical = vec3(0, viewport_height, 0);
         horizontal = vec3(viewport_width, 0, 0);
@@ -36,7 +34,6 @@ private:
     point3 low_left_corner;
     vec3 vertical;
     vec3 horizontal;
-    double vfov;
 };
 
 #endif //RAYTRACING_CAMERA_H
