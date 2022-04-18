@@ -8,7 +8,7 @@
 #include "hittable.h"
 #include "sphere.h"
 
-/*double hit_sphere(const point3& center, double radius, const ray& r)
+double hit_sphere(const point3& center, double radius, const ray& r)
 {
     vec3 oc = r.get_origin() - center;
     auto a = r.get_direction().length_square();
@@ -24,7 +24,7 @@
 
     auto root = (-half_b - sqrtd) / a;
     return root;
-}*/
+}
 
 color ray_color(const ray& r, sphere& sp, hit_record& rec)
 {
@@ -34,6 +34,17 @@ color ray_color(const ray& r, sphere& sp, hit_record& rec)
     }
     vec3 unit_direction = unit_vector(r.get_direction());
     double t= 0.5*(unit_direction.y() + 1.0);
+    return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
+}
+
+color ray_color(const ray& r) {
+    auto t = hit_sphere(point3(0, 0, -1), 0.5, r);
+    if (t > 0)
+    {
+        return color(0,1, 0);
+    }
+    vec3 unit_direction = unit_vector(r.get_direction());
+    t= 0.5*(unit_direction.y() + 1.0);
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 
@@ -62,7 +73,7 @@ int main()
         {
             double u = double(i)/image_width;
             double v = double(j)/image_height;
-            ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical() - cam.get_origin());
+            ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical());
             color pixel_color = ray_color(r, sphere1, rec);
             write_color(std::cout, pixel_color);
         }

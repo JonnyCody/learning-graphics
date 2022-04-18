@@ -10,7 +10,7 @@
 class sphere : public hittable
 {
 public:
-    sphere(const vec3& cen, double rad) : center(cen), radius(rad) {}
+    sphere(const vec3 cen, double rad) : center(cen), radius(rad) {}
     virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override
     {
         vec3 oc = r.get_origin() - center;
@@ -26,10 +26,10 @@ public:
         auto sqrtd = sqrt(discriminant);
 
         auto root = (-half_b - sqrtd) / a;
-        if(root < t_min || root > t_min)
+        if(root < t_min || root > t_max)
         {
             root = (-half_b + sqrtd) / a;
-            if(root < t_min || root > t_min)
+            if(root < t_min || root > t_max)
             {
                 return false;
             }
