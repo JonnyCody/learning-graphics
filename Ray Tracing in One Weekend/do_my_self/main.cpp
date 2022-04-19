@@ -8,57 +8,26 @@
 #include "hittable.h"
 #include "hittable_list.h"
 #include "sphere.h"
-
-double hit_sphere(const point3& center, double radius, const ray& r)
-{
-    vec3 oc = r.get_origin() - center;
-    auto a = r.get_direction().length_square();
-    auto half_b = dot(oc, r.get_direction());
-    auto c = oc.length_square() - radius*radius;
-
-    auto discriminant = half_b*half_b - a*c;
-    if(discriminant < 0)
-    {
-        return -1.0;
-    }
-    auto sqrtd = sqrt(discriminant);
-
-    auto root = (-half_b - sqrtd) / a;
-    return root;
-}
-
-color ray_color(const ray& r, sphere& sp, hit_record& rec)
-{
-    if(sp.hit(r, 0, infinity, rec))
-    {
-        return 0.5 * (rec.normal + color(1,1,1));
-    }
-    vec3 unit_direction = unit_vector(r.get_direction());
-    double t= 0.5*(unit_direction.y() + 1.0);
-    return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
-}
-
-color ray_color(const ray& r) {
-    auto t = hit_sphere(point3(0, 0, -1), 0.5, r);
-    if (t > 0)
-    {
-        return color(0,1, 0);
-    }
-    vec3 unit_direction = unit_vector(r.get_direction());
-    t= 0.5*(unit_direction.y() + 1.0);
-    return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
-}
+#include "material.h"
 
 color ray_color(const ray& r, hittable_list& world, hit_record& rec, int depth)
 {
     if(depth <= 0)
     {
-        return color(0, 0, 0);
+        return color(1, 0, 0);
     }
     if (world.hit(r, 0, infinity, rec))
     {
-        auto target = rec.position + random_in_hemisphere(rec.normal);
-        return 0.5 * ray_color(ray(rec.position, target - rec.position), world, rec, depth-1);
+        ray scatter;
+        color attenuation;
+        if(rec.mtr_ptr->scatter(r, rec, attenuation, scatter))
+        {
+            return attenuation * ray_color(scatter, world, rec, depth - 1);
+        }
+        return color(0, 0, 0);
+        /*auto target = rec.position + rec.normal + random_in_unit_sphere();
+        return 0.5 * ray_color(ray(rec.position, reflect(r.get_direction(), rec.normal)), world, rec, depth-1);*/
+        // return 0.5 * ray_color(ray(rec.position, target - rec.position), world, rec, depth-1);
     }
     vec3 unit_direction = unit_vector(r.get_direction());
     auto t= 0.5*(unit_direction.y() + 1.0);
@@ -71,18 +40,24 @@ int main()
     double aspect_ratio = 16.0/9.0;
     const int image_width = 800;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 20;
-    const int max_depth = 20;
+    const int samples_per_pixel = 100;
+    const int max_depth = 50;
 
     // Camera
     camera cam;
 
-    //objects
-    hit_record rec;
+    //world
     hittable_list world;
-    world.add(std::make_shared<sphere>(vec3(0, 0, -1), 0.5));
-    world.add(std::make_shared<sphere>(vec3(0, -100.5, -1), 100));
+    hit_record rec;
+    auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
+    auto material_center = std::make_shared<lambertian>(color(0.7, 0.3, 0.3));
+    auto material_left = std::make_shared<metal>(color(0.8, 0.8, 0.8));
+    auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2));
 
+    world.add(std::make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100, material_ground));
+    world.add(std::make_shared<sphere>(point3( 0.0, 0.0,    -1.0), 0.5, material_center));
+    world.add(std::make_shared<sphere>(point3(-1.0, 0.0,    -1.0), 0.5, material_left));
+    world.add(std::make_shared<sphere>(point3( 1.0, 0.0,    -1.0), 0.5, material_right));
 
     // Render
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";

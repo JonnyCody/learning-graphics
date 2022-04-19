@@ -47,6 +47,12 @@ vec3 random_vec3()
     return vec3(random_number(), random_number(), random_number());
 }
 
+vec3 random_unit_vec3()
+{
+    auto v = random_vec3();
+    return v/v.length();
+}
+
 point3 random_in_unit_sphere()
 {
     while(true)
@@ -66,6 +72,11 @@ point3 random_in_hemisphere(const vec3& normal)
         return in_unit_sphere;
     }
     return -in_unit_sphere;
+}
+
+vec3 reflect(const vec3& v, const vec3& n)
+{
+    return v-2* dot(v,n)*n;
 }
 
 #endif //RAYTRACING_UTILITY_H

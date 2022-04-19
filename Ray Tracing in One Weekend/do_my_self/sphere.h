@@ -10,7 +10,7 @@
 class sphere : public hittable
 {
 public:
-    sphere(const vec3 cen, double rad) : center(cen), radius(rad) {}
+    sphere(const vec3 cen, double rad, std::shared_ptr<material> m) : center(cen), radius(rad), mtr_ptr(m) {}
     virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override
     {
         vec3 oc = r.get_origin() - center;
@@ -36,13 +36,16 @@ public:
         }
         rec.t = root;
         rec.position = r.at(root);
-        rec.normal = (rec.position - center) / radius;
+        vec3 outward_norm = (rec.position - center) / radius;
+        rec.set_face_normal(r, outward_norm);
+        rec.mtr_ptr = mtr_ptr;
         return true;
     }
 
 private:
     point3 center;
     double radius;
+    std::shared_ptr<material> mtr_ptr;
 };
 
 #endif //RAYTRACING_SPHERE_H

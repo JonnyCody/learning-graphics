@@ -24,7 +24,7 @@ public:
         return 0;
     };
 
-    vec3 operator-()
+    vec3 operator-() const
     {
         return vec3(-x(),-y(),-z());
     }
@@ -83,7 +83,11 @@ public:
     {
         return std::sqrt(length_square());
     }
-
+    bool near_zero()
+    {
+        double zero = 1e-8;
+        return (fabs(e[0]) < zero) && (fabs(e[1]) < zero) && (fabs(e[2]) < zero);
+    }
 private:
     double e[3];
 };
