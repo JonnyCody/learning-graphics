@@ -14,9 +14,9 @@ color ray_color(const ray& r, hittable_list& world, hit_record& rec, int depth)
 {
     if(depth <= 0)
     {
-        return color(1, 0, 0);
+        return color(0, 0, 0);
     }
-    if (world.hit(r, 0, infinity, rec))
+    if (world.hit(r, 0.01, infinity, rec))
     {
         ray scatter;
         color attenuation;
@@ -25,9 +25,6 @@ color ray_color(const ray& r, hittable_list& world, hit_record& rec, int depth)
             return attenuation * ray_color(scatter, world, rec, depth - 1);
         }
         return color(0, 0, 0);
-        /*auto target = rec.position + rec.normal + random_in_unit_sphere();
-        return 0.5 * ray_color(ray(rec.position, reflect(r.get_direction(), rec.normal)), world, rec, depth-1);*/
-        // return 0.5 * ray_color(ray(rec.position, target - rec.position), world, rec, depth-1);
     }
     vec3 unit_direction = unit_vector(r.get_direction());
     auto t= 0.5*(unit_direction.y() + 1.0);
@@ -51,8 +48,8 @@ int main()
     hit_record rec;
     auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
     auto material_center = std::make_shared<lambertian>(color(0.7, 0.3, 0.3));
-    auto material_left = std::make_shared<metal>(color(0.8, 0.8, 0.8));
-    auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2));
+    auto material_left = std::make_shared<dielectric>(1.5);
+    auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2), 1.0);
 
     world.add(std::make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100, material_ground));
     world.add(std::make_shared<sphere>(point3( 0.0, 0.0,    -1.0), 0.5, material_center));
