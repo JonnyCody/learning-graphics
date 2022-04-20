@@ -16,7 +16,7 @@ color ray_color(const ray& r, hittable_list& world, hit_record& rec, int depth)
     {
         return color(0, 0, 0);
     }
-    if (world.hit(r, 0.01, infinity, rec))
+    if (world.hit(r, 0.001, infinity, rec))
     {
         ray scatter;
         color attenuation;
@@ -43,15 +43,22 @@ int main()
     // Camera
     // camera cam;
     // camera cam(point3(-2,2,1), point3(0,0,-1), vec3(0,1,0), 90, aspect_ratio);
-    camera cam(point3(-2,2,1), point3(0,0,-1), vec3(0,1,0), 20, aspect_ratio);
+    // camera cam(point3(-2,2,1), point3(0,0,-1), vec3(0,1,0), 20, aspect_ratio);
+    point3 lookfrom(3,3,2);
+    point3 lookat(0,0,-1);
+    vec3 vup(0,1,0);
+    auto dist_to_focus = (lookfrom-lookat).length();
+    auto aperture = 2.0;
+
+    camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
     //world
     hittable_list world;
     hit_record rec;
     auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
-    auto material_center = std::make_shared<lambertian>(color(0.7, 0.3, 0.3));
-    auto material_left = std::make_shared<dielectric>(1.5);
-    auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2), 1.0);
+    auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
+    auto material_left   = std::make_shared<dielectric>(1.5);
+    auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
 
     world.add(std::make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, material_ground));
     world.add(std::make_shared<sphere>(point3( 0.0,    0.0, -1.0),   0.5, material_center));
