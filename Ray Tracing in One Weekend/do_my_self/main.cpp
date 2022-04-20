@@ -41,7 +41,9 @@ int main()
     const int max_depth = 50;
 
     // Camera
-    camera cam;
+    // camera cam;
+    // camera cam(point3(-2,2,1), point3(0,0,-1), vec3(0,1,0), 90, aspect_ratio);
+    camera cam(point3(-2,2,1), point3(0,0,-1), vec3(0,1,0), 20, aspect_ratio);
 
     //world
     hittable_list world;
@@ -51,10 +53,11 @@ int main()
     auto material_left = std::make_shared<dielectric>(1.5);
     auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2), 1.0);
 
-    world.add(std::make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100, material_ground));
-    world.add(std::make_shared<sphere>(point3( 0.0, 0.0,    -1.0), 0.5, material_center));
-    world.add(std::make_shared<sphere>(point3(-1.0, 0.0,    -1.0), 0.5, material_left));
-    world.add(std::make_shared<sphere>(point3( 1.0, 0.0,    -1.0), 0.5, material_right));
+    world.add(std::make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, material_ground));
+    world.add(std::make_shared<sphere>(point3( 0.0,    0.0, -1.0),   0.5, material_center));
+    world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, material_left));
+    world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0), -0.45, material_left));
+    world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
 
     // Render
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
@@ -68,7 +71,8 @@ int main()
             {
                 double u = double(i + random_number())/image_width;
                 double v = double(j + random_number())/image_height;
-                ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical());
+                // ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical());
+                ray r = cam.get_ray(u,v);
                 pixel_color += ray_color(r, world, rec, max_depth);
             }
             write_color(std::cout, pixel_color, samples_per_pixel);
