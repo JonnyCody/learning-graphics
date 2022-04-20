@@ -47,6 +47,11 @@ vec3 random_vec3()
     return vec3(random_number(), random_number(), random_number());
 }
 
+vec3 random_vec3(double min, double max)
+{
+    return vec3(random_number(min, max), random_number(min, max), random_number(min, max));
+}
+
 vec3 random_unit_vec3()
 {
     auto v = random_vec3();
