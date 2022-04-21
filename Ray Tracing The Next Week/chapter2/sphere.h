@@ -1,54 +1,51 @@
 //
-// Created by jonny on 2022/4/13.
+// Created by jonny on 2022/4/18.
 //
 
 #ifndef RAYTRACING_SPHERE_H
 #define RAYTRACING_SPHERE_H
 
 #include "hittable.h"
-#include "vec3.h"
 
 class sphere : public hittable
 {
 public:
-    sphere(){}
-    sphere(point3 cen, double r, shared_ptr<material> m): center(cen),radius(r), mat_ptr(m){};
-    virtual bool hit(
-            const ray& r, double t_min, double t_max, hit_record& rec) const override;
-public:
-    point3 center;
-    double radius;
-    shared_ptr<material> mat_ptr;
-};
-
-bool sphere::hit(const ray &r, double t_min, double t_max, hit_record &rec) const
-{
-    vec3 oc = r.origin() - center;
-    auto a = r.direction().length_squared();
-    auto half_b = dot(oc, r.direction());
-    auto c = oc.length_squared() - radius*radius;
-
-    auto discriminant = half_b*half_b-a*c;
-    if(discriminant < 0) return false;
-    auto sqrtd = sqrt(discriminant);
-
-    // Find the nearest root that lies in the acceptable range.
-    auto root = (-half_b - sqrtd)/a;
-    if(root < t_min || t_max < root)
+    sphere(const vec3 cen, double rad, std::shared_ptr<material> m) : center(cen), radius(rad), mtr_ptr(m) {}
+    virtual bool hit(const ray &r, double t_min, double t_max, hit_record &rec) const override
     {
-        root = (-half_b + sqrtd)/a;
-        if(root < t_min || t_max < root)
+        vec3 oc = r.get_origin() - center;
+        auto a = r.get_direction().length_square();
+        auto half_b = dot(oc, r.get_direction());
+        auto c = oc.length_square() - radius*radius;
+
+        auto discriminant = half_b*half_b - a*c;
+        if(discriminant < 0)
         {
             return false;
         }
-    }
-    rec.t = root;
-    rec.p = r.at(rec.t);
-    vec3 outward_norm = (rec.p - center) / radius;
-    rec.set_face_normal(r, outward_norm);
-    rec.mat_ptr = mat_ptr;
+        auto sqrtd = sqrt(discriminant);
 
-    return true;
-}
+        auto root = (-half_b - sqrtd) / a;
+        if(root < t_min || root > t_max)
+        {
+            root = (-half_b + sqrtd) / a;
+            if(root < t_min || root > t_max)
+            {
+                return false;
+            }
+        }
+        rec.t = root;
+        rec.position = r.at(root);
+        vec3 outward_norm = (rec.position - center) / radius;
+        rec.set_face_normal(r, outward_norm);
+        rec.mtr_ptr = mtr_ptr;
+        return true;
+    }
+
+private:
+    point3 center;
+    double radius;
+    std::shared_ptr<material> mtr_ptr;
+};
 
 #endif //RAYTRACING_SPHERE_H

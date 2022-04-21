@@ -47,6 +47,11 @@ vec3 random_vec3()
     return vec3(random_number(), random_number(), random_number());
 }
 
+vec3 random_vec3(double min, double max)
+{
+    return vec3(random_number(min, max), random_number(min, max), random_number(min, max));
+}
+
 vec3 random_unit_vec3()
 {
     auto v = random_vec3();
@@ -84,6 +89,14 @@ vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
     vec3 r_out_perp =  etai_over_etat * (uv + cos_theta*n);
     vec3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_square())) * n;
     return r_out_perp + r_out_parallel;
+}
+
+vec3 random_in_unit_disk() {
+    while (true) {
+        auto p = vec3(random_number(-1,1), random_number(-1,1), 0);
+        if (p.length_square() >= 1) continue;
+        return p;
+    }
 }
 
 #endif //RAYTRACING_UTILITY_H
