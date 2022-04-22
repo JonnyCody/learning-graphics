@@ -69,7 +69,7 @@ public:
         return ray(
                 origin + offset,
                 low_left_corner + s*horizontal + t*vertical - origin - offset,
-                random_number(time0,time1)
+                random_number_double(time0,time1)
         );
     }
 

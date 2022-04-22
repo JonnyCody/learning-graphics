@@ -32,26 +32,26 @@ inline double clamp(double x, double min, double max)
     return x;
 }
 
-inline double random_number()
+inline double random_number_double()
 {
     static std::uniform_real_distribution<double> distribution(0.0, 1.0);
     static std::mt19937 generator;
     return distribution(generator);
 }
 
-inline double random_number(double min, double max)
+inline double random_number_double(double min, double max)
 {
-    return min + (max - min) * random_number();
+    return min + (max - min) * random_number_double();
 }
 
 vec3 random_vec3()
 {
-    return vec3(random_number(), random_number(), random_number());
+    return vec3(random_number_double(), random_number_double(), random_number_double());
 }
 
 vec3 random_vec3(double min, double max)
 {
-    return vec3(random_number(min, max), random_number(min, max), random_number(min, max));
+    return vec3(random_number_double(min, max), random_number_double(min, max), random_number_double(min, max));
 }
 
 vec3 random_unit_vec3()
@@ -95,10 +95,16 @@ vec3 refract(const vec3& uv, const vec3& n, double etai_over_etat) {
 
 vec3 random_in_unit_disk() {
     while (true) {
-        auto p = vec3(random_number(-1,1), random_number(-1,1), 0);
+        auto p = vec3(random_number_double(-1,1), random_number_double(-1,1), 0);
         if (p.length_square() >= 1) continue;
         return p;
     }
+}
+
+inline int random_number_int(int min, int max)
+{
+    // Return a random integer in  [min, max]
+    return static_cast<int>(random_number_double(min, max + 1));
 }
 
 #endif //RAYTRACING_UTILITY_H

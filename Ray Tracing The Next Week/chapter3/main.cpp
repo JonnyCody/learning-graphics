@@ -19,8 +19,8 @@ hittable_list random_scene() {
 
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
-            auto choose_mat = random_number();
-            point3 center(a + 0.9*random_number(), 0.2, b + 0.9*random_number());
+            auto choose_mat = random_number_double();
+            point3 center(a + 0.9*random_number_double(), 0.2, b + 0.9*random_number_double());
 
             if ((center - point3(4, 0.2, 0)).length() > 0.9) {
                 std::shared_ptr<material> sphere_material;
@@ -29,12 +29,12 @@ hittable_list random_scene() {
                     // diffuse
                     auto albedo = random_vec3() * random_vec3();
                     sphere_material = std::make_shared<lambertian>(albedo);
-                    auto center2 = center + vec3(0, random_number(0, .5), 0);
+                    auto center2 = center + vec3(0, random_number_double(0, .5), 0);
                     world.add(std::make_shared<moving_sphere>(center,center2,0.0, 1.0, 0.2, sphere_material));
                 } else if (choose_mat < 0.95) {
                     // metal
                     auto albedo = random_vec3(0.5, 1);
-                    auto fuzz = random_number(0, 0.5);
+                    auto fuzz = random_number_double(0, 0.5);
                     sphere_material = std::make_shared<metal>(albedo, fuzz);
                     world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
                 } else {
@@ -126,8 +126,8 @@ int main()
             color pixel_color(0, 0, 0);
             for(int s = 0;s<samples_per_pixel;++s)
             {
-                double u = double(i + random_number())/image_width;
-                double v = double(j + random_number())/image_height;
+                double u = double(i + random_number_double())/image_width;
+                double v = double(j + random_number_double())/image_height;
                 // ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical());
                 ray r = cam.get_ray(u,v);
                 pixel_color += ray_color(r, world, rec, max_depth);
