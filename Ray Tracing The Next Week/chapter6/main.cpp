@@ -12,7 +12,7 @@
 #include "moving_sphere.h"
 
 hittable_list earth() {
-    auto earth_texture = std::make_shared<image_texture>("./external/earthmap.jpg");
+    auto earth_texture = std::make_shared<image_texture>("../external/earthmap.jpg");
     auto earth_surface = std::make_shared<lambertian>(earth_texture);
     auto globe = std::make_shared<sphere>(point3(0,0,0), 2, earth_surface);
 

@@ -9,7 +9,9 @@
 #include <iostream>
 
 #include "perlin.h"
+
 #include "rt_stb_image.h"
+
 #include "vec3.h"
 
 class texture
@@ -88,7 +90,8 @@ public:
     {
         auto components_per_pixel = bytes_per_pixel;
 
-        data = stbi_load(filename, &width, &height, &components_per_pixel, components_per_pixel);
+        data = stbi_load(
+                filename, &width, &height, &components_per_pixel, components_per_pixel);
 
         if (!data) {
             std::cerr << "ERROR: Could not load texture image file '" << filename << "'.\n";

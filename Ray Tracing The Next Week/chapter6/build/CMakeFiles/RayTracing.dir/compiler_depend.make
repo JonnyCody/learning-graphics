@@ -255,21 +255,49 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
   ../material.h \
   ../texture.h \
   ../perlin.h \
-  ../rt_stb_image.h \
-  ../external/stb_image.h \
+  ../stb_image.h \
   /usr/include/c++/11/stdlib.h \
   /usr/include/string.h \
   /usr/include/strings.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h \
+  /usr/include/limits.h \
+  /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/local_lim.h \
+  /usr/include/linux/limits.h \
+  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
+  /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
   /usr/include/c++/11/math.h \
   /usr/include/assert.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/emmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/xmmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h \
   ../moving_sphere.h
 
 
 ../moving_sphere.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/xmmintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/emmintrin.h:
+
 /usr/include/assert.h:
 
 /usr/include/c++/11/math.h:
+
+/usr/include/x86_64-linux-gnu/bits/xopen_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix2_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/local_lim.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix1_lim.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h:
 
 /usr/include/strings.h:
 
@@ -323,6 +351,10 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 
 /usr/include/c++/11/tr1/poly_hermite.tcc:
 
+/usr/include/c++/11/bits/exception.h:
+
+/usr/include/c++/11/bits/locale_facets.h:
+
 /usr/include/c++/11/tr1/hypergeometric.tcc:
 
 /usr/include/c++/11/bits/localefwd.h:
@@ -330,12 +362,6 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 /usr/include/c++/11/tr1/exp_integral.tcc:
 
 /usr/include/c++/11/tr1/ell_integral.tcc:
-
-/usr/include/c++/11/bits/exception.h:
-
-/usr/include/c++/11/bits/locale_facets.h:
-
-../external/stb_image.h:
 
 /usr/include/c++/11/tr1/poly_laguerre.tcc:
 
@@ -432,10 +458,6 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
 
 /usr/include/c++/11/tr1/bessel_function.tcc:
-
-/usr/include/string.h:
-
-/usr/include/c++/11/bits/streambuf.tcc:
 
 /usr/include/c++/11/bits/atomic_lockfree_defines.h:
 
@@ -535,8 +557,6 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 
 /usr/include/c++/11/bits/concept_check.h:
 
-../rt_stb_image.h:
-
 /usr/include/c++/11/iostream:
 
 /usr/include/x86_64-linux-gnu/bits/fp-fast.h:
@@ -635,6 +655,8 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/atomic_word.h:
 
+/usr/include/x86_64-linux-gnu/bits/uio_lim.h:
+
 /usr/include/c++/11/string:
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos_t.h:
@@ -692,6 +714,8 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 /usr/include/c++/11/bits/charconv.h:
 
 /usr/include/c++/11/bits/basic_string.tcc:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h:
 
 /usr/include/c++/11/system_error:
 
@@ -753,6 +777,8 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 
 ../ray.h:
 
+/usr/include/linux/limits.h:
+
 /usr/include/c++/11/bits/shared_ptr_base.h:
 
 /usr/include/c++/11/bits/basic_string.h:
@@ -767,6 +793,8 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 
 /usr/include/c++/11/bits/uses_allocator.h:
 
+/usr/include/limits.h:
+
 /usr/include/c++/11/bits/stl_relops.h:
 
 /usr/include/c++/11/tr1/beta_function.tcc:
@@ -776,6 +804,8 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 /usr/include/c++/11/bits/refwrap.h:
 
 /usr/include/c++/11/bits/shared_ptr_atomic.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h:
 
 /usr/include/c++/11/debug/debug.h:
 
@@ -787,4 +817,10 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 
 ../sphere.h:
 
+../stb_image.h:
+
 /usr/include/c++/11/stdlib.h:
+
+/usr/include/c++/11/bits/streambuf.tcc:
+
+/usr/include/string.h:

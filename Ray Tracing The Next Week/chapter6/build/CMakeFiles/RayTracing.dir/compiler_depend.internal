@@ -256,12 +256,24 @@ CMakeFiles/RayTracing.dir/main.cpp.o
  /home/jonny/learning-graphics/Ray Tracing The Next Week/chapter6/material.h
  /home/jonny/learning-graphics/Ray Tracing The Next Week/chapter6/texture.h
  /home/jonny/learning-graphics/Ray Tracing The Next Week/chapter6/perlin.h
- /home/jonny/learning-graphics/Ray Tracing The Next Week/chapter6/rt_stb_image.h
- /home/jonny/learning-graphics/Ray Tracing The Next Week/chapter6/external/stb_image.h
+ /home/jonny/learning-graphics/Ray Tracing The Next Week/chapter6/stb_image.h
  /usr/include/c++/11/stdlib.h
  /usr/include/string.h
  /usr/include/strings.h
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h
+ /usr/include/limits.h
+ /usr/include/x86_64-linux-gnu/bits/posix1_lim.h
+ /usr/include/x86_64-linux-gnu/bits/local_lim.h
+ /usr/include/linux/limits.h
+ /usr/include/x86_64-linux-gnu/bits/posix2_lim.h
+ /usr/include/x86_64-linux-gnu/bits/xopen_lim.h
+ /usr/include/x86_64-linux-gnu/bits/uio_lim.h
  /usr/include/c++/11/math.h
  /usr/include/assert.h
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/emmintrin.h
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/xmmintrin.h
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h
  /home/jonny/learning-graphics/Ray Tracing The Next Week/chapter6/moving_sphere.h
 
