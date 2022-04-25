@@ -5,8 +5,7 @@
 #ifndef RAYTRACING_AABB_H
 #define RAYTRACING_AABB_H
 
-#include "vec3.h"
-#include "ray.h"
+
 #include "utility.h"
 
 class aabb

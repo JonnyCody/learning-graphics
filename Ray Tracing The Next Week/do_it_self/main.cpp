@@ -104,7 +104,7 @@ int main()
 
     //world
     hittable_list world = random_scene();
-    hit_record rec;
+
     auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
     auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
     auto material_left   = std::make_shared<dielectric>(1.5);
@@ -116,6 +116,8 @@ int main()
     world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0), -0.45, material_left));
     world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
 
+    bvh_node node(world, 0.001, infinity);
+    hit_record rec;
     // Render
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
     for(int j = image_height-1;j>=0;--j)

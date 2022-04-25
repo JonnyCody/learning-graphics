@@ -4,23 +4,22 @@
 
 #ifndef RAYTRACING_BVH_H
 #define RAYTRACING_BVH_H
+#include <algorithm>
 
 #include "hittable.h"
 #include "hittable_list.h"
-
-#include <algorithm>
 
 class bvh_node : public hittable
 {
 public:
     bvh_node();
-    bvh_node(hittable_list& list, double time0, double time1)
+    bvh_node(const hittable_list& list, double time0, double time1)
      : bvh_node(list.get_objects(), 0, list.get_objects().size(), time0,time1){}
     bvh_node(const std::vector<std::shared_ptr<hittable>>& src_objects, int start, int end, double time0, double time1);
     virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override;
     virtual bool bounding_box(double time0, double time1, aabb& outbox) const override;
 
-protected:
+public:
     std::shared_ptr<hittable> left;
     std::shared_ptr<hittable> right;
     aabb box;
@@ -67,7 +66,7 @@ bvh_node::bvh_node(const std::vector<std::shared_ptr<hittable>>& src_objects,
     }
     else if(object_span == 2)
     {
-        if(comparator(objects[start], objects[end]))
+        if(comparator(objects[start], objects[start + 1]))
         {
             left = objects[start];
             right = objects[start + 1];

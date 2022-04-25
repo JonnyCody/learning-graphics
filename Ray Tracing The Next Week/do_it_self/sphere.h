@@ -42,7 +42,7 @@ public:
         return true;
     }
 
-    virtual bool bounding_box(double time0, double time1, aabb& outbox)
+    virtual bool bounding_box(double time0, double time1, aabb& outbox) const override
     {
         outbox = aabb(center - vec3(radius, radius, radius),
                       center + vec3(radius, radius, radius));
