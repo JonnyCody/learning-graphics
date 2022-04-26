@@ -57,6 +57,16 @@ hittable_list random_scene() {
     auto material3 = std::make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
     world.add(std::make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
+    auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
+    auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
+    auto material_left   = std::make_shared<dielectric>(1.5);
+    auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
+    world.add(std::make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, material_ground));
+    world.add(std::make_shared<sphere>(point3( 0.0,    0.0, -1.0),   0.5, material_center));
+    world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, material_left));
+    world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0), -0.45, material_left));
+    world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
+
     return world;
 }
 
@@ -126,25 +136,14 @@ int main()
     point3 lookat;
     auto vfov = 40.0;
     auto aperture = 0.0;
-    switch (0) {
-        default:
-        /*case 1:
+    switch (1) {
+        case 1:
             world = random_scene();
-            auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
-            auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
-            auto material_left   = std::make_shared<dielectric>(1.5);
-            auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
-            world.add(std::make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, material_ground));
-            world.add(std::make_shared<sphere>(point3( 0.0,    0.0, -1.0),   0.5, material_center));
-            world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, material_left));
-            world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0), -0.45, material_left));
-            world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
-
             lookfrom = point3(13, 2, 3);
             lookat = point3(0, 0, 0);
             vfov = 20.0;
             aperture = 0.1;
-            break;*/
+            break;
         case 2:
             world = earth();
             lookfrom = point3(13, 2, 3);
