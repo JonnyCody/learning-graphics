@@ -1,7 +1,6 @@
 //
 // Created by jonny on 2022/4/16.
 //
-#include "aabb.h"
 #include "bvh.h"
 #include "camera.h"
 #include "vec3.h"
@@ -9,6 +8,7 @@
 #include "color.h"
 #include "hittable.h"
 #include "hittable_list.h"
+#include "moving_sphere.h"
 #include "sphere.h"
 #include "material.h"
 #include "utility.h"
@@ -37,7 +37,8 @@ hittable_list random_scene() {
                     auto albedo = random_vec3(0.5, 1);
                     auto fuzz = random_double_number(0, 0.5);
                     sphere_material = std::make_shared<metal>(albedo, fuzz);
-                    world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+                    point3 center2 = center + point3(0, random_double_number(0, .5), 0);
+                    world.add(std::make_shared<moving_sphere>(center, center2, 0.0, 1.0, 0.2, sphere_material));
                 } else {
                     // glass
                     sphere_material = std::make_shared<dielectric>(1.5);
@@ -110,7 +111,7 @@ int main()
     const int image_width = 1200;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 500;
-    const int max_depth = 50;
+    const int max_depth = 10;
 
     // Camera
     // camera cam;
@@ -122,7 +123,7 @@ int main()
     auto dist_to_focus = 10.0;
     auto aperture = 0.1;
 
-    camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
+    camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
     //world
     hittable_list world = random_scene();

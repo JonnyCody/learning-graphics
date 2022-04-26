@@ -49,7 +49,7 @@ public:
         return true;
     }
 
-private:
+protected:
     point3 center;
     double radius;
     std::shared_ptr<material> mtr_ptr;

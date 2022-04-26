@@ -34,7 +34,9 @@ public:
             double vfov,
             double aspect_ratio,
             double aperture,
-            double focus_dist
+            double focus_dist,
+            double _time0,
+            double _time1
             )
     {
         auto theta = degree_to_radian(vfov);
@@ -52,6 +54,8 @@ public:
         low_left_corner = origin - horizontal/2 - vertical/2 - focus_dist*w;
 
         lens_radius = aperture / 2;
+        time0 = _time0;
+        time1 = _time1;
     }
     point3 get_origin() const {return origin;}
     point3 get_low_left_corner() const {return low_left_corner;}
@@ -64,7 +68,8 @@ public:
 
         return ray(
                 origin + offset,
-                low_left_corner + s*horizontal + t*vertical - origin - offset
+                low_left_corner + s*horizontal + t*vertical - origin - offset,
+                random_double_number(time0, time1)
         );
     }
 private:
@@ -74,6 +79,7 @@ private:
     vec3 horizontal;
     vec3 u, v, w;
     double lens_radius;
+    double time0, time1;
 };
 
 #endif //RAYTRACING_CAMERA_H
