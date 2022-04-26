@@ -38,7 +38,7 @@ hittable_list random_scene() {
                     auto fuzz = random_double_number(0, 0.5);
                     sphere_material = std::make_shared<metal>(albedo, fuzz);
                     point3 center2 = center + point3(0, random_double_number(0, .5), 0);
-                    world.add(std::make_shared<moving_sphere>(center, center2, 0.0, 1.0, 0.2, sphere_material));
+                    world.add(std::make_shared<moving_sphere>(center, center2, 0.2, 0.0, 1.0, sphere_material));
                 } else {
                     // glass
                     sphere_material = std::make_shared<dielectric>(1.5);
@@ -57,6 +57,14 @@ hittable_list random_scene() {
     auto material3 = std::make_shared<metal>(color(0.7, 0.6, 0.5), 0.0);
     world.add(std::make_shared<sphere>(point3(4, 1, 0), 1.0, material3));
 
+    return world;
+}
+
+hittable_list earth()
+{
+    hittable_list world;
+    auto earth_texture = std::make_shared<image_texture>("../resource/earthmap.jpg");
+    world.add(std::make_shared<sphere>(point3(0.0, 0.0, 0.0), 2, std::make_shared<lambertian>(earth_texture)));
     return world;
 }
 
@@ -107,39 +115,53 @@ color ray_color(const ray& r, bvh_node& world, int depth)
 int main()
 {
     // Image
-    double aspect_ratio = 3.0/2.0;
-    const int image_width = 1200;
-    const int image_height = static_cast<int>(image_width / aspect_ratio);
-    const int samples_per_pixel = 500;
+    double aspect_ratio = 16.0/9.0;
+    const int image_width = 400;
+    const int samples_per_pixel = 100;
     const int max_depth = 10;
 
-    // Camera
-    // camera cam;
-    // camera cam(point3(-2,2,1), point3(0,0,-1), vec3(0,1,0), 90, aspect_ratio);
-    // camera cam(point3(-2,2,1), point3(0,0,-1), vec3(0,1,0), 20, aspect_ratio);
-    point3 lookfrom(13,2,3);
-    point3 lookat(0,0,0);
-    vec3 vup(0,1,0);
-    auto dist_to_focus = 10.0;
-    auto aperture = 0.1;
-
-    camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
-
     //world
-    hittable_list world = random_scene();
+    hittable_list world;
+    point3 lookfrom;
+    point3 lookat;
+    auto vfov = 40.0;
+    auto aperture = 0.0;
+    switch (0) {
+        default:
+        /*case 1:
+            world = random_scene();
+            auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
+            auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
+            auto material_left   = std::make_shared<dielectric>(1.5);
+            auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
+            world.add(std::make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, material_ground));
+            world.add(std::make_shared<sphere>(point3( 0.0,    0.0, -1.0),   0.5, material_center));
+            world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, material_left));
+            world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0), -0.45, material_left));
+            world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
 
-    auto material_ground = std::make_shared<lambertian>(color(0.8, 0.8, 0.0));
-    auto material_center = std::make_shared<lambertian>(color(0.1, 0.2, 0.5));
-    auto material_left   = std::make_shared<dielectric>(1.5);
-    auto material_right  = std::make_shared<metal>(color(0.8, 0.6, 0.2), 0.0);
+            lookfrom = point3(13, 2, 3);
+            lookat = point3(0, 0, 0);
+            vfov = 20.0;
+            aperture = 0.1;
+            break;*/
+        case 2:
+            world = earth();
+            lookfrom = point3(13, 2, 3);
+            lookat = point3(0, 0, 0);
+            vfov = 20.0;
+            break;
+    }
 
-    world.add(std::make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, material_ground));
-    world.add(std::make_shared<sphere>(point3( 0.0,    0.0, -1.0),   0.5, material_center));
-    world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, material_left));
-    world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0), -0.45, material_left));
-    world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
 
     bvh_node nodes(world, 0.001, infinity);
+
+    // Camera
+    vec3 vup(0,1,0);
+    auto dist_to_focus = 10.0;
+    int image_height = static_cast<int>(image_width / aspect_ratio);
+
+    camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
     // Render
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
     for(int j = image_height-1;j>=0;--j)

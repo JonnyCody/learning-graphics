@@ -8,6 +8,7 @@
 /*#include "utility.h"
 #include "ray.h"*/
 #include "hittable.h"
+#include "texture.h"
 // struct hit_record;
 class material
 {
@@ -20,7 +21,8 @@ public:
 class lambertian : public material
 {
 public:
-    lambertian(const color& c) : albedo(c){}
+    lambertian(const color& c) : albedo(std::make_shared<solid_color>(c)){}
+    lambertian(std::shared_ptr<texture> a) : albedo(a){}
     virtual bool scatter(
             const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
     ) const override
@@ -31,11 +33,11 @@ public:
             scatter = rec.normal;
         }
         scattered = ray(rec.position, scatter, r_in.get_time());
-        attenuation = albedo;
+        attenuation = albedo->value(rec.u, rec.v, rec.position);
         return true;
     }
 private:
-    color albedo;
+    std::shared_ptr<texture> albedo;
 };
 
 class metal : public material
