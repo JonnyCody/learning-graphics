@@ -59,9 +59,9 @@ hittable_list random_scene() {
     return world;
 }
 
-
-color ray_color(const ray& r, hittable_list& world, hit_record& rec, int depth)
+color ray_color(const ray& r, hittable_list& world, int depth)
 {
+    hit_record rec;
     if(depth <= 0)
     {
         return color(0, 0, 0);
@@ -72,7 +72,29 @@ color ray_color(const ray& r, hittable_list& world, hit_record& rec, int depth)
         color attenuation;
         if(rec.mtr_ptr->scatter(r, rec, attenuation, scatter))
         {
-            return attenuation * ray_color(scatter, world, rec, depth - 1);
+            return attenuation * ray_color(scatter, world, depth - 1);
+        }
+        return color(0, 0, 0);
+    }
+    vec3 unit_direction = unit_vector(r.get_direction());
+    auto t= 0.5*(unit_direction.y() + 1.0);
+    return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
+}
+
+color ray_color(const ray& r, bvh_node& world, int depth)
+{
+    hit_record rec;
+    if(depth <= 0)
+    {
+        return color(0, 0, 0);
+    }
+    if (world.hit(r, 0.001, infinity, rec))
+    {
+        ray scatter;
+        color attenuation;
+        if(rec.mtr_ptr->scatter(r, rec, attenuation, scatter))
+        {
+            return attenuation * ray_color(scatter, world, depth - 1);
         }
         return color(0, 0, 0);
     }
@@ -116,8 +138,7 @@ int main()
     world.add(std::make_shared<sphere>(point3(-1.0,    0.0, -1.0), -0.45, material_left));
     world.add(std::make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, material_right));
 
-    bvh_node node(world, 0.001, infinity);
-    hit_record rec;
+    bvh_node nodes(world, 0.001, infinity);
     // Render
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
     for(int j = image_height-1;j>=0;--j)
@@ -130,9 +151,8 @@ int main()
             {
                 double u = double(i + random_double_number())/image_width;
                 double v = double(j + random_double_number())/image_height;
-                // ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical());
                 ray r = cam.get_ray(u,v);
-                pixel_color += ray_color(r, world, rec, max_depth);
+                pixel_color += ray_color(r, nodes, max_depth);
             }
             write_color(std::cout, pixel_color, samples_per_pixel);
         }

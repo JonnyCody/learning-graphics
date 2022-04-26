@@ -96,13 +96,35 @@ bvh_node::bvh_node(const std::vector<std::shared_ptr<hittable>>& src_objects,
 
 bool bvh_node::hit(const ray &r, double t_min, double t_max, hit_record &rec) const
 {
-    if(!box.hit(r, t_min, t_max))
+    if(box.hit(r, t_min, t_max))
+    {
+        hit_record left_rec, right_rec;
+        bool hit_left = left->hit(r, t_min, t_max, left_rec);
+        bool hit_right = right->hit(r, t_min, t_max, right_rec);
+        if(hit_left&&hit_right)
+        {
+            rec = left_rec.t < right_rec.t ? left_rec : right_rec;
+            return true;
+        }
+        else if(hit_left)
+        {
+            rec = left_rec;
+            return true;
+        }
+        else if(hit_right)
+        {
+            rec = right_rec;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
     {
         return false;
     }
-    bool hit_left = left->hit(r, t_min, t_max, rec);
-    bool hit_right = right->hit(r, t_min, hit_left ? rec.t : t_max, rec);
-    return hit_left || hit_right;
 }
 
 bool bvh_node::bounding_box(double time0, double time1, aabb &outbox) const
