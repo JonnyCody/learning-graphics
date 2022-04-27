@@ -1,6 +1,7 @@
 //
 // Created by jonny on 2022/4/16.
 //
+#include "aarect.h"
 #include "bvh.h"
 #include "camera.h"
 #include "vec3.h"
@@ -78,6 +79,21 @@ hittable_list earth()
     return world;
 }
 
+hittable_list simple_light()
+{
+    hittable_list world;
+    auto earth_texture = std::make_shared<image_texture>("../resource/earthmap.jpg");
+    world.add(std::make_shared<sphere>(point3(0, -1000, 0),
+                                       1000, std::make_shared<lambertian>(std::make_shared<solid_color>(color(0, 1, 0)))));
+    world.add(std::make_shared<sphere>(point3(0, 2, 0), 2, std::make_shared<lambertian>(earth_texture)));
+
+    auto difflight = std::make_shared<diffuse_light>(color(4, 4, 4));
+    world.add(std::make_shared<xy_rect>(3, 5, 1, 3, -2, difflight));
+    world.add(std::make_shared<sphere>(point3(0, 6, 0), 1, difflight));
+
+    return world;
+}
+
 color ray_color(const ray& r, hittable_list& world, int depth)
 {
     hit_record rec;
@@ -100,26 +116,25 @@ color ray_color(const ray& r, hittable_list& world, int depth)
     return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 
-color ray_color(const ray& r, bvh_node& world, int depth)
+color ray_color(const ray& r, bvh_node& nodes, const color& background, int depth)
 {
     hit_record rec;
     if(depth <= 0)
     {
         return color(0, 0, 0);
     }
-    if (world.hit(r, 0.001, infinity, rec))
+    if (!nodes.hit(r, 0.001, infinity, rec))
     {
-        ray scatter;
-        color attenuation;
-        if(rec.mtr_ptr->scatter(r, rec, attenuation, scatter))
-        {
-            return attenuation * ray_color(scatter, world, depth - 1);
-        }
-        return color(0, 0, 0);
+        return background;
     }
-    vec3 unit_direction = unit_vector(r.get_direction());
-    auto t= 0.5*(unit_direction.y() + 1.0);
-    return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
+    ray scatter;
+    color attenuation;
+    color emitted = rec.mtr_ptr->emitted(rec.u, rec.v, rec.position);
+    if(!rec.mtr_ptr->scatter(r, rec, attenuation, scatter))
+    {
+        return emitted;
+    }
+    return emitted + attenuation * ray_color(scatter, nodes, background, depth - 1);
 }
 
 int main()
@@ -127,8 +142,9 @@ int main()
     // Image
     double aspect_ratio = 16.0/9.0;
     const int image_width = 400;
-    const int samples_per_pixel = 100;
-    const int max_depth = 10;
+    const int samples_per_pixel = 400;
+    const int max_depth = 50;
+
 
     //world
     hittable_list world;
@@ -136,9 +152,11 @@ int main()
     point3 lookat;
     auto vfov = 40.0;
     auto aperture = 0.0;
-    switch (1) {
+    color background(0, 0, 0);
+    switch (3) {
         case 1:
             world = random_scene();
+            background = color(0.70, 0.80, 1.00);
             lookfrom = point3(13, 2, 3);
             lookat = point3(0, 0, 0);
             vfov = 20.0;
@@ -146,13 +164,21 @@ int main()
             break;
         case 2:
             world = earth();
+            background = color(0.70, 0.80, 1.00);
             lookfrom = point3(13, 2, 3);
             lookat = point3(0, 0, 0);
             vfov = 20.0;
             break;
+        case 3:
+            world = simple_light();
+            background = color(0, 0, 0);
+            lookfrom = point3(26, 3, 6);
+            lookat = point3(0, 2, 0);
+            vfov = 20.0;
+            break;
     }
 
-
+    // create bvh node
     bvh_node nodes(world, 0.001, infinity);
 
     // Camera
@@ -174,7 +200,7 @@ int main()
                 double u = double(i + random_double_number())/image_width;
                 double v = double(j + random_double_number())/image_height;
                 ray r = cam.get_ray(u,v);
-                pixel_color += ray_color(r, nodes, max_depth);
+                pixel_color += ray_color(r, nodes, background, max_depth);
             }
             write_color(std::cout, pixel_color, samples_per_pixel);
         }
