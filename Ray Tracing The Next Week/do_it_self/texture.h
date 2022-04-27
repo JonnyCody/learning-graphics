@@ -24,7 +24,7 @@ public:
 
     solid_color(double red, double green, double blue) : color_value(color(red, green, blue)){}
 
-    virtual color value(double u, double v, const point3 &p) const
+    virtual color value(double u, double v, const point3 &p) const override
     {
         return color_value;
     }
@@ -70,9 +70,9 @@ public:
         if(i >= width) i = width - 1;
         if(j >= height) j = height - 1;
 
-        auto pixel = data + j * bytes_per_scanline + i * bytes_per_pixel;
+        auto pixel = data + j*bytes_per_scanline + i*bytes_per_pixel;
 
-        const auto color_scale = 1.0 / 255;
+        const auto color_scale = 1.0 / 255.0;
 
         return color(pixel[0] * color_scale, pixel[1] * color_scale, pixel[2]*color_scale);
     }

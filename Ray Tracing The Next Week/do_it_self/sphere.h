@@ -35,7 +35,7 @@ public:
             }
         }
         rec.t = root;
-        rec.position = r.at(root);
+        rec.position = r.at(rec.t);
         vec3 outward_norm = (rec.position - center) / radius;
         rec.set_face_normal(r, outward_norm);
         get_sphere_uv(outward_norm, rec.u, rec.v);

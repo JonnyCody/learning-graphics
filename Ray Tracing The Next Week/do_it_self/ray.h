@@ -11,9 +11,9 @@ class ray
 {
 public:
     ray(){}
-    ray(const point3& org, const vec3 dir, const double _time):origin(org),direction(dir), time(_time){}
+    ray(const point3& org, const vec3& dir, const double _time):origin(org),direction(dir), time(_time){}
 
-    point3 get_origin() const {return origin;}
+    vec3 get_origin() const {return origin;}
     vec3 get_direction() const {return direction;}
 
     point3 at(double t) const
@@ -27,7 +27,7 @@ public:
     }
 
 protected:
-    point3 origin;
+    vec3 origin;
     vec3 direction;
     double time;
 };

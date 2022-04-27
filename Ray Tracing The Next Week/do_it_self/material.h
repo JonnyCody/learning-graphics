@@ -15,8 +15,7 @@ public:
         return color(0, 0, 0);
     };
     virtual bool scatter(
-            const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
-            ) const = 0;
+            const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const = 0;
 };
 
 class lambertian : public material
@@ -25,15 +24,14 @@ public:
     lambertian(const color& c) : albedo(std::make_shared<solid_color>(c)){}
     lambertian(std::shared_ptr<texture> a) : albedo(a){}
     virtual bool scatter(
-            const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered
-    ) const override
+            const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override
     {
-        vec3 scatter = rec.normal + random_unit_vec3();
-        if(scatter.near_zero())
+        vec3 target = rec.normal + random_in_unit_sphere();
+        if(target.near_zero())
         {
-            scatter = rec.normal;
+            target = rec.normal;
         }
-        scattered = ray(rec.position, scatter, r_in.get_time());
+        scattered = ray(rec.position, target, r_in.get_time());
         attenuation = albedo->value(rec.u, rec.v, rec.position);
         return true;
     }
@@ -52,7 +50,7 @@ public:
         auto reflected = reflect(unit_vector(r_in.get_direction()), rec.normal);
         scattered = ray(rec.position, reflected + fuzz * random_in_unit_sphere(), r_in.get_time());
         attenuation = albedo;
-        return dot(scattered.get_direction(), rec.normal) > 0;
+        return (dot(scattered.get_direction(), rec.normal) > 0);
     }
 private:
     color albedo;

@@ -19,7 +19,7 @@ public:
         {
             return false;
         }
-        auto x = r.get_origin().x() + t * r.get_direction().x();
+        auto x = r.get_origin().x() + t*r.get_direction().x();
         auto y = r.get_origin().y() + t*r.get_direction().y();
         if(x < x0 || x > x1 || y < y0 || y > y1)
         {
@@ -37,7 +37,7 @@ public:
     }
     virtual bool bounding_box(double time0, double time1, aabb& outbox) const override
     {
-        outbox = aabb(point3(x0, y0, k - 0.001), point3(x1, y1, k + 0.001));
+        outbox = aabb(point3(x0, y0, k - 0.0001), point3(x1, y1, k + 0.0001));
         return true;
     }
 
