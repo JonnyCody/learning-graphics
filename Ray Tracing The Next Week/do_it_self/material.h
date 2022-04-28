@@ -86,7 +86,8 @@ public:
 public:
     double ir; // Index of Refraction
 private:
-    static double reflectance(double cosine, double ref_idx) {
+    static double reflectance(double cosine, double ref_idx)
+    {
         // Use Schlick's approximation for reflectance.
         auto r0 = (1-ref_idx) / (1+ref_idx);
         r0 = r0*r0;
@@ -110,6 +111,21 @@ public:
     }
 protected:
     std::shared_ptr<texture> emit;
+};
+
+class isotropic : public material
+{
+public:
+    isotropic(const color& c) : albedo(std::make_shared<solid_color>(c)){}
+    isotropic(std::shared_ptr<texture> a) : albedo(a){}
+    virtual bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered) const override
+    {
+        scattered = ray(rec.position, random_in_unit_sphere(), r_in.get_time());
+        attenuation = albedo->value(rec.u, rec.v, rec.position);
+        return true;
+    }
+protected:
+    std::shared_ptr<texture> albedo;
 };
 
 #endif //RAYTRACING_MATERIAL_H
