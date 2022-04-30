@@ -63,21 +63,40 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
     // TO DO Implement Path Tracing Algorithm here
     if(depth > this->maxDepth)
     {
-        return Vector3f(0.0,0.0,0.0);
+        return Vector3f(0, 0, 0);
     }
-    Intersection intersection = this->intersect(ray);
-    Material *m = intersection.m;
-    Object *hitObject = intersection.obj;
-    Vector3f hitColor = this->backgroundColor;
-    Vector2f uv;
-    uint32_t index = 0;
-    if(intersection.happened)
+    Intersection inter = this->intersect(ray);
+    if(!inter.happened)
     {
-        Vector3f hitPoint = intersection.coords;
-        Vector3f N = intersection.normal;
-        switch (m->getType())
-        {
-
-        }
+        return Vector3f(0, 0, 0);
     }
+    auto p = inter.coords;
+    auto N = inter.normal;
+    auto m = inter.m;
+    if(m->hasEmission())
+    {
+        return m->getEmission();
+    }
+    float pdf_light;
+    Intersection inter1;
+    sampleLight(inter1, pdf_light);
+    auto x = inter1.coords;
+    auto ws = normalize(x-p);
+    auto NN = inter1.normal;
+    auto emit = inter1.emit;
+    auto diff = intersect(Ray(x, ws)).coords - p;
+    Vector3f L_dir, L_indir;
+    if((diff.x*diff.x+diff.y*diff.y+diff.z*diff.z) < 0.01)
+    {
+        L_dir = emit*m->eval(ray.direction, ws, N)* dotProduct(ws, N)* dotProduct(ws, NN)
+                / dotProduct((x-p),(x-p)) / pdf_light;
+    }
+    if(get_random_float() > RussianRoulette)
+    {
+        return L_dir;
+    }
+    auto wi = m->sample(ray.direction, N);
+    L_indir = castRay(Ray(p, wi), depth+1) + m->eval(ray.direction, wi, N)* dotProduct(wi, N)
+            / m->pdf(ray.direction, wi, N) / RussianRoulette;
+    return L_dir + L_indir;
 }
