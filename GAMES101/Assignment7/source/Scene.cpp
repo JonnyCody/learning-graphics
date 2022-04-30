@@ -63,12 +63,12 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
     // TO DO Implement Path Tracing Algorithm here
     if(depth > this->maxDepth)
     {
-        return Vector3f(0, 0, 0);
+        return Vector3f(0.0, 0.0, 0.0);
     }
     Intersection inter = this->intersect(ray);
     if(!inter.happened)
     {
-        return Vector3f(0, 0, 0);
+        return Vector3f(0.0, 0.0, 0.0);
     }
     auto p = inter.coords;
     auto N = inter.normal;
@@ -86,7 +86,7 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
     auto emit = inter1.emit;
     auto diff = intersect(Ray(x, ws)).coords - p;
     Vector3f L_dir, L_indir;
-    if((diff.x*diff.x+diff.y*diff.y+diff.z*diff.z) < 0.01)
+    if((diff.x*diff.x+diff.y*diff.y+diff.z*diff.z) < 0.00001)
     {
         L_dir = emit*m->eval(ray.direction, ws, N)* dotProduct(ws, N)* dotProduct(ws, NN)
                 / dotProduct((x-p),(x-p)) / pdf_light;
@@ -96,7 +96,7 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
         return L_dir;
     }
     auto wi = m->sample(ray.direction, N);
-    L_indir = castRay(Ray(p, wi), depth+1) + m->eval(ray.direction, wi, N)* dotProduct(wi, N)
+    L_indir = castRay(Ray(p, wi), depth+1) * m->eval(ray.direction, wi, N) * dotProduct(wi, N)
             / m->pdf(ray.direction, wi, N) / RussianRoulette;
     return L_dir + L_indir;
 }
