@@ -6,7 +6,6 @@
 #include <iostream>
 #include <iomanip>
 #include <math.h>
-#include <stdlib.h>
 
 inline double random_double_number()
 {
