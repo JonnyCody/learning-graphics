@@ -7,29 +7,21 @@
 #include <iomanip>
 #include <math.h>
 
-inline double random_double_number()
-{
-    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    static std::mt19937 generator;
-    return distribution(generator);
-}
+#include "vec3.h"
+#include "utility.h"
 
-inline double random_double_number(double min, double max)
-{
-    return min + (max - min) * random_double_number();
-}
-
-inline double pdf(double x) {
-    return 3*x*x/8;
+inline double pdf(const vec3& p) {
+    return 1 / (4*pi);
 }
 
 int main()
 {
-    int N = 1;
+    int N = 1000000;
     auto sum = 0.0;
     for (int i = 0; i < N; i++) {
-        auto x = pow(random_double_number(0,8), 1./3.);
-        sum += x*x / pdf(x);
+        vec3 d = random_unit_vec3();
+        auto cosine_squared = d.z()*d.z();
+        sum += cosine_squared / pdf(d);
     }
     std::cout << std::fixed << std::setprecision(12);
     std::cout << "I = " << sum/N << '\n';
