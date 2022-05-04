@@ -17,6 +17,22 @@ namespace CGL {
 //        for (auto &i : pinned_nodes) {
 //            masses[i]->pinned = true;
 //        }
+        auto interval = (end-start)/ (num_nodes-1);
+        for(int i=0;i<num_nodes;++i)
+        {
+            auto mass = new Mass(start + i*interval, node_mass, false);
+            mass->velocity = Vector2D(0, 0);
+            masses.push_back(mass);
+        }
+        for(int i=1;i<num_nodes;++i)
+        {
+            auto spring = new Spring(masses[i-1], masses[i], k);
+            springs.push_back(spring);
+        }
+        for(auto &i : pinned_nodes)
+        {
+            masses[i]->pinned = true;
+        }
     }
 
     void Rope::simulateEuler(float delta_t, Vector2D gravity)
@@ -24,6 +40,11 @@ namespace CGL {
         for (auto &s : springs)
         {
             // TODO (Part 2): Use Hooke's law to calculate the force on a node
+            auto ba = s->m2->position - s->m1->position;
+            auto f = s->k*ba.unit()*(ba.norm()-s->rest_length);
+
+            s->m1->forces+=f;
+            s->m2->forces-=f;
         }
 
         for (auto &m : masses)
@@ -31,7 +52,7 @@ namespace CGL {
             if (!m->pinned)
             {
                 // TODO (Part 2): Add the force due to gravity, then compute the new velocity and position
-
+                m->forces+=gravity*m->mass;
                 // TODO (Part 2): Add global damping
             }
 
