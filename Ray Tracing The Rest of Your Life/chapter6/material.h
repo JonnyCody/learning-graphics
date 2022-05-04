@@ -38,16 +38,14 @@ public:
     virtual bool scatter(
             const ray& r_in, const hit_record& rec, color& alb, ray& scattered, double& pdf
     ) const override {
-        auto scatter_direction = rec.normal + random_unit_vec3();
+        auto direction = random_in_hemisphere(rec.normal);
 
-        // Catch degenerate scatter direction
-        if (scatter_direction.near_zero())
-            scatter_direction = rec.normal;
-        scattered = ray(rec.position, unit_vector(scatter_direction), r_in.get_time());
+        scattered = ray(rec.position, unit_vector(direction), r_in.get_time());
         alb = albedo->value(rec.u, rec.v, rec.position);
-        pdf = dot(rec.normal, scattered.get_direction()) / pi;
+        pdf = 0.5 / pi;
         return true;
     }
+
     double scattering_pdf(
             const ray& r_in, const hit_record& rec, const ray& scattered
     ) const {
