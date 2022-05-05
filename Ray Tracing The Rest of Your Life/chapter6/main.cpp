@@ -1,6 +1,9 @@
 //
 // Created by jonny on 2022/4/16.
 //
+
+#include <chrono>
+
 #include "aarect.h"
 #include "box.h"
 #include "bvh.h"
@@ -70,24 +73,27 @@ color ray_color(const ray& r, hittable_list& world, color background, int depth)
 color ray_color(const ray& r, bvh_node& nodes, const color& background, int depth)
 {
     hit_record rec;
-    if (nodes.hit(r, 0.001, infinity, rec))
-    {
-        ray scattered;
-        color attenuation;
-        color emitted = rec.mtr_ptr->emitted(rec.u, rec.v, rec.position);
-        double pdf;
-        color albedo;
-        if(depth > 0 && rec.mtr_ptr->scatter(r, rec, attenuation, scattered, pdf))
-        {
-            return emitted + albedo * rec.mtr_ptr->scattering_pdf(r, rec, scattered)
-                     * ray_color(scattered, nodes, background, depth-1) / pdf;
-        }
-        else
-        {
-            return emitted;
-        }
-    }
-    return background;
+
+    // If we've exceeded the ray bounce limit, no more light is gathered.
+    if (depth <= 0)
+        return background;
+
+    // If the ray hits nothing, return the background color.
+    if (!nodes.hit(r, 0.001, infinity, rec))
+        return background;
+
+    ray scattered;
+    color attenuation;
+    color emitted = rec.mtr_ptr->emitted(rec.u, rec.v, rec.position);
+    double pdf;
+    color albedo;
+
+    if (!rec.mtr_ptr->scatter(r, rec, albedo, scattered, pdf))
+        return emitted;
+
+    return emitted
+           + albedo * rec.mtr_ptr->scattering_pdf(r, rec, scattered)
+             * ray_color(scattered, nodes, background, depth-1) / pdf;
 }
 
 int main()
@@ -117,6 +123,8 @@ int main()
     // create bvh node
     bvh_node nodes(world, 0.001, infinity);
 
+    auto start = std::chrono::system_clock::now();
+
     // Render
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
     for(int j = image_height-1;j>=0;--j)
@@ -135,5 +143,11 @@ int main()
             write_color(std::cout, pixel_color, samples_per_pixel);
         }
     }
+
     std::cerr << "\nDone.\n";
+    auto stop = std::chrono::system_clock::now();
+
+    std::cerr << "Time taken: " << std::chrono::duration_cast<std::chrono::hours>(stop - start).count() << " hours\n";
+    std::cerr << "          : " << std::chrono::duration_cast<std::chrono::minutes>(stop - start).count() << " minutes\n";
+    std::cerr << "          : " << std::chrono::duration_cast<std::chrono::seconds>(stop - start).count() << " seconds\n";
 }
