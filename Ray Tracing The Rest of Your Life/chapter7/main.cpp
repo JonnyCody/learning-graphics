@@ -2,21 +2,13 @@
 // Created by jonny on 2022/4/29.
 //
 
-#include <random>
 #include <iostream>
-#include <iomanip>
 #include <math.h>
+#include <iomanip>
 
-// Constants
-const double infinity = std::numeric_limits<double>::infinity();
-const double pi = 3.1415926535897932385;
+#include "utility.h"
+#include "vec3.h"
 
-inline double random_double_number()
-{
-    static std::uniform_real_distribution<double> distribution(0.0, 1.0);
-    static std::mt19937 generator;
-    return distribution(generator);
-}
 
 int main()
 {
