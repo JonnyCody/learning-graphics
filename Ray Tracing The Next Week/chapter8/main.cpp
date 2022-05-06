@@ -2,6 +2,8 @@
 // Created by jonny on 2022/4/16.
 //
 #include "aarect.h"
+#include "bvh.h"
+#include "box.h"
 #include "camera.h"
 #include "vec3.h"
 #include "ray.h"
@@ -26,6 +28,8 @@ hittable_list cornell_box() {
     objects.add(std::make_shared<xz_rect>(0, 555, 0, 555, 0, white));
     objects.add(std::make_shared<xz_rect>(0, 555, 0, 555, 555, white));
     objects.add(std::make_shared<xy_rect>(0, 555, 0, 555, 555, white));
+    objects.add(std::make_shared<box>(point3(130, 0, 65), point3(295, 165, 230), white));
+    objects.add(std::make_shared<box>(point3(265, 0, 295), point3(430, 330, 460), white));
 
     return objects;
 }
@@ -231,6 +235,7 @@ int main()
 
     // camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus, 0.0, 1.0);
 
+    bvh_node node(world, 0.001, infinity);
     // Render
     std::cout << "P3\n" << image_width << " " << image_height << "\n255\n";
     for(int j = image_height-1;j>=0;--j)

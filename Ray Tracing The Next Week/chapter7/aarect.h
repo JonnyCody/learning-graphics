@@ -8,10 +8,9 @@
 #include "utility.h"
 #include "hittable.h"
 
-class xy_rect : public hittable
-{
+class xy_rect : public hittable {
 public:
-    xy_rect(){}
+    xy_rect() {}
 
     xy_rect(double _x0, double _x1, double _y0, double _y1, double _k,
             std::shared_ptr<material> mat)
@@ -25,6 +24,7 @@ public:
         output_box = aabb(point3(x0,y0, k-0.0001), point3(x1, y1, k+0.0001));
         return true;
     }
+
 public:
     std::shared_ptr<material> mp;
     double x0, x1, y0, y1, k;

@@ -121,41 +121,37 @@ hittable_list random_scene() {
 }
 
 
-color ray_color(const ray& r, const color& background, hittable_list& world, hit_record& rec, int depth)
-{
-    // If we've exceeded the ray bounce limit, no more light is gathered.
-    if(depth <= 0)
-    {
-        return color(0, 0, 0);
-    }
+color ray_color(const ray& r, const color& background, const hittable& world, int depth) {
+    hit_record rec;
 
-    // f the ray hits nothing, return the background color.
-    if (!world.hit(r, 0.01, infinity, rec))
-    {
+    // If we've exceeded the ray bounce limit, no more light is gathered.
+    if (depth <= 0)
+        return color(0,0,0);
+
+    // If the ray hits nothing, return the background color.
+    if (!world.hit(r, 0.001, infinity, rec))
         return background;
-    }
-    ray scatter;
+
+    ray scattered;
     color attenuation;
     color emitted = rec.mtr_ptr->emitted(rec.u, rec.v, rec.position);
 
-    if(!rec.mtr_ptr->scatter(r, rec, attenuation, scatter))
-    {
+    if (!rec.mtr_ptr->scatter(r, rec, attenuation, scattered))
         return emitted;
-    }
-    return emitted + attenuation * ray_color(scatter, background, world, rec, depth - 1);
+
+    return emitted + attenuation * ray_color(scattered, background, world, depth-1);
 }
 
 int main()
 {
     // Image
     double aspect_ratio = 16.0/9.0;
-    int image_width = 1920;
+    int image_width = 400;
     const int max_depth = 50;
     int samples_per_pixel = 100;
     // World
 
     hittable_list world;
-    hit_record rec;
     point3 lookfrom;
     point3 lookat;
     auto vfov = 40.0;
@@ -195,7 +191,7 @@ int main()
             break;
         case 5:
             world = simple_light();
-            samples_per_pixel = 100;
+            samples_per_pixel = 400;
             background = color(0,0,0);
             lookfrom = point3(26,3,6);
             lookat = point3(0,2,0);
@@ -206,7 +202,7 @@ int main()
             world = cornell_box();
             aspect_ratio = 1.0;
             image_width = 600;
-            samples_per_pixel = 200;
+            samples_per_pixel = 400;
             background = color(0,0,0);
             lookfrom = point3(278, 278, -800);
             lookat = point3(278, 278, 0);
@@ -249,7 +245,7 @@ int main()
                 double v = double(j + random_number_double())/image_height;
                 // ray r(cam.get_origin(), cam.get_low_left_corner()+u*cam.get_horizontal() + v*cam.get_vertical());
                 ray r = cam.get_ray(u,v);
-                pixel_color += ray_color(r, background, world, rec, max_depth);
+                pixel_color += ray_color(r, background, world, max_depth);
             }
             write_color(std::cout, pixel_color, samples_per_pixel);
         }

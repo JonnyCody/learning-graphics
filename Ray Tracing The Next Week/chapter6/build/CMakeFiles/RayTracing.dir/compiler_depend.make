@@ -255,6 +255,7 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
   ../material.h \
   ../texture.h \
   ../perlin.h \
+  ../rt_stb_image.h \
   ../stb_image.h \
   /usr/include/c++/11/stdlib.h \
   /usr/include/string.h \
@@ -459,6 +460,10 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 
 /usr/include/c++/11/tr1/bessel_function.tcc:
 
+/usr/include/string.h:
+
+/usr/include/c++/11/bits/streambuf.tcc:
+
 /usr/include/c++/11/bits/atomic_lockfree_defines.h:
 
 /usr/include/c++/11/ostream:
@@ -556,6 +561,8 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
 
 /usr/include/c++/11/bits/concept_check.h:
+
+../rt_stb_image.h:
 
 /usr/include/c++/11/iostream:
 
@@ -820,7 +827,3 @@ CMakeFiles/RayTracing.dir/main.cpp.o: ../main.cpp \
 ../stb_image.h:
 
 /usr/include/c++/11/stdlib.h:
-
-/usr/include/c++/11/bits/streambuf.tcc:
-
-/usr/include/string.h:
