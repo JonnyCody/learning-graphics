@@ -15,6 +15,7 @@
 #include "hittable.h"
 #include "hittable_list.h"
 #include "moving_sphere.h"
+#include "pdf.h"
 #include "sphere.h"
 #include "material.h"
 #include "utility.h"
@@ -62,33 +63,19 @@ color ray_color(const ray& r, hittable_list& world, color background, int depth)
     ray scattered;
     color attenuation;
     color emitted = rec.mtr_ptr->emitted(rec, rec.u, rec.v, rec.position);
-    double pdf;
+    double pdf_val;
     color albedo;
 
-    if (!rec.mtr_ptr->scatter(r, rec, albedo, scattered, pdf))
+    if (!rec.mtr_ptr->scatter(r, rec, albedo, scattered, pdf_val))
         return emitted;
 
-    auto on_light = point3(random_double_number(213,343), 554, random_double_number(227,332));
-    auto to_light = on_light - rec.position;
-    auto distance_squared = to_light.length_square();
-    to_light = unit_vector(to_light);
-
-    if(dot(to_light, rec.normal) < 0)
-    {
-        return emitted;
-    }
-
-    double light_area = (343-213)*(332-227);
-    auto light_cosine = fabs(to_light.y());
-    if(light_cosine < 0.000001)
-        return emitted;
-
-    pdf = distance_squared / (light_cosine*light_area);
-    scattered = ray(rec.position, to_light, r.get_time());
+    cosine_pdf p(rec.normal);
+    scattered = ray(rec.position, p.generate(), r.get_time());
+    pdf_val = p.value(scattered.get_direction());
 
     return emitted
            + albedo * rec.mtr_ptr->scattering_pdf(r, rec, scattered)
-             * ray_color(scattered, world, background, depth-1) / pdf;
+             * ray_color(scattered, world, background, depth-1) / pdf_val;
 }
 
 color ray_color(const ray& r, bvh_node& nodes, const color& background, int depth)
@@ -106,33 +93,19 @@ color ray_color(const ray& r, bvh_node& nodes, const color& background, int dept
     ray scattered;
     color attenuation;
     color emitted = rec.mtr_ptr->emitted(rec, rec.u, rec.v, rec.position);
-    double pdf;
+    double pdf_val;
     color albedo;
 
-    if (!rec.mtr_ptr->scatter(r, rec, albedo, scattered, pdf))
+    if (!rec.mtr_ptr->scatter(r, rec, albedo, scattered, pdf_val))
         return emitted;
 
-    auto on_light = point3(random_double_number(213,343), 554, random_double_number(227,332));
-    auto to_light = on_light - rec.position;
-    auto distance_squared = to_light.length_square();
-    to_light = unit_vector(to_light);
-
-    if(dot(to_light, rec.normal) < 0)
-    {
-        return emitted;
-    }
-
-    double light_area = (343-213)*(332-227);
-    auto light_cosine = fabs(to_light.y());
-    if(light_cosine < 0.000001)
-        return emitted;
-
-    pdf = distance_squared / (light_cosine*light_area);
-    scattered = ray(rec.position, to_light, r.get_time());
+    cosine_pdf p(rec.normal);
+    scattered = ray(rec.position, p.generate(), r.get_time());
+    pdf_val = p.value(scattered.get_direction());
 
     return emitted
            + albedo * rec.mtr_ptr->scattering_pdf(r, rec, scattered)
-             * ray_color(scattered, nodes, background, depth-1) / pdf;
+             * ray_color(scattered, nodes, background, depth-1) / pdf_val;
 }
 
 int main()
